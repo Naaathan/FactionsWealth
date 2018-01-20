@@ -1,0 +1,8 @@
+name: FactionsWealth
+version: 1.0.0
+main: net.kyuzi.factionswealth.FactionsWealth
+author: Nathan
+softdepend: [Factions, SilkSpawners]
+commands:
+  fwealthreload:
+    description: Reload all configuration values.

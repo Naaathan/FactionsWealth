@@ -1,0 +1,35 @@
+# How many factions should be displayed on the wealth page
+factions_per_page: 10
+# Should chest content be included in a faction's wealth?
+include_chest_content: false
+storage:
+  # file, mysql
+  type: file
+  file:
+    name: wealth.yml
+  mysql:
+    host: localhost
+    port: 3306
+    database: factions_wealth
+    username: root
+    password: pass123
+task:
+  recalculate:
+    # Should the recalculate task run?
+    enabled: false
+    # How many seconds between each task?
+    period: 3600
+    # The start date of the task
+    # Date format: dd/MM/yyyy
+    start_date: 01/01/2018
+    # The start time of the task
+    # Time format: hh:mm:ss
+    start_time: 00:00:00
+values:
+  # Either use Bukkit API material names or item IDs
+  blocks:
+    EMERALD_BLOCK: 1000.0
+  items:
+    DIAMOND_CHESTPLATE: 100.0
+  spawners:
+    IRON_GOLEM: 10000.0
