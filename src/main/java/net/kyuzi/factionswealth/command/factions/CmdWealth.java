@@ -15,7 +15,6 @@ import net.kyuzi.factionswealth.utility.HoverUtils;
 import net.kyuzi.factionswealth.utility.MessageUtils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 
@@ -41,6 +40,9 @@ public class CmdWealth extends FCommand {
         senderMustBeMember = false;
         senderMustBeModerator = false;
         senderMustBeAdmin = false;
+
+        FORMAT.setGroupingSize(3);
+        FORMAT.setGroupingUsed(true);
     }
 
     @Override
@@ -140,7 +142,7 @@ public class CmdWealth extends FCommand {
 
                             if (amount > 0) {
                                 includeNextBlock = true;
-                                tooltipTemp.append(inner.replace("{" + extractedPlaceholder + "}", "" + amount));
+                                tooltipTemp.append(inner.replace("{" + extractedPlaceholder + "}", "" + amount)).append("\n");
                             }
                         }
                     } else if (inner.equals("")) {
@@ -178,7 +180,7 @@ public class CmdWealth extends FCommand {
 
                             if (amount > 0) {
                                 includeNextBlock = true;
-                                tooltipTemp.append(inner.replace("{" + extractedPlaceholder + "}", "" + amount));
+                                tooltipTemp.append(inner.replace("{" + extractedPlaceholder + "}", "" + amount)).append("\n");
                             }
                         }
                     } else if (inner.equals("")) {
@@ -210,7 +212,7 @@ public class CmdWealth extends FCommand {
                                             .replace("{CHEST_VALUE}", FORMAT.format(valuedFaction.getChestValue()))
                                             .replace("{SPAWNER_VALUE}", FORMAT.format(valuedFaction.getSpawnersValue()))
                                             .replace("{TOTAL_VALUE}", FORMAT.format(valuedFaction.getTotalValue()))
-                            );
+                            ).append("\n");
                         }
                     } else {
                         tooltipTemp.append("\n");

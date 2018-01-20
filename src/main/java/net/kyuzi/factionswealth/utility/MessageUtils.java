@@ -167,6 +167,11 @@ public class MessageUtils {
         return instance;
     }
 
+    public static MessageUtils reload() {
+        instance = null;
+        return getInstance();
+    }
+
     private String prepareMessage(String message) {
         return ChatColor.translateAlternateColorCodes('&', message.replace("{prefix}", PREFIX).replace("\\n", "\n"));
     }

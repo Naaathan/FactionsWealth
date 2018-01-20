@@ -30,7 +30,7 @@ public class CmdReload implements CommandExecutor {
 
         FactionsWealth.getInstance().getLogger().info("Loading hovers...");
 
-        if (HoverUtils.getInstance() == null) {
+        if (HoverUtils.reload() == null) {
             FactionsWealth.getInstance().getLogger().severe("Failed to load hovers!");
             FactionsWealth.getInstance().getServer().getPluginManager().disablePlugin(FactionsWealth.getInstance());
             return true;
@@ -39,7 +39,7 @@ public class CmdReload implements CommandExecutor {
         FactionsWealth.getInstance().getLogger().info("Hovers loaded!");
         FactionsWealth.getInstance().getLogger().info("Loading messages...");
 
-        if (MessageUtils.getInstance() == null) {
+        if (MessageUtils.reload() == null) {
             FactionsWealth.getInstance().getLogger().severe("Failed to load messages!");
             FactionsWealth.getInstance().getServer().getPluginManager().disablePlugin(FactionsWealth.getInstance());
             return true;
