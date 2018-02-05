@@ -58,7 +58,7 @@
             <groupId>com.massivecraft</groupId>
             <artifactId>Factions</artifactId>
             <scope>system</scope>
-            <systemPath>${lib.jars}/Factions.jar</systemPath>
+            <systemPath>${lib.jars}/FactionsUUID.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>de.dustplanet</groupId>
