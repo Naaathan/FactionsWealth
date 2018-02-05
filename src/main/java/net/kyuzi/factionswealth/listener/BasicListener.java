@@ -1,5 +1,6 @@
 package net.kyuzi.factionswealth.listener;
 
+import com.massivecraft.factions.FLocation;
 import com.massivecraft.factions.Faction;
 import com.massivecraft.factions.Factions;
 import com.massivecraft.factions.event.*;
@@ -13,6 +14,8 @@ import net.kyuzi.factionswealth.task.update.WealthUpdate;
 import net.kyuzi.factionswealth.task.update.WealthUpdateTask;
 import net.kyuzi.factionswealth.utility.InventoryUtils;
 
+import org.bukkit.Chunk;
+import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -210,8 +213,10 @@ public class BasicListener implements Listener {
         }
 
         Faction faction = e.getFaction();
+        FLocation location = e.getLocation();
+        ChunkSnapshot claim = location.getWorld().getChunkAt((int) location.getX(), (int) location.getZ()).getChunkSnapshot();
 
-        new CalculateChunkTask(e.getLocation(), faction) {
+        new CalculateChunkTask(claim, faction, true) {
 
             @Override
             public void done() {
@@ -231,8 +236,10 @@ public class BasicListener implements Listener {
         }
 
         Faction faction = e.getFaction();
+        FLocation location = e.getLocation();
+        ChunkSnapshot claim = location.getWorld().getChunkAt((int) location.getX(), (int) location.getZ()).getChunkSnapshot();
 
-        new CalculateChunkTask(e.getLocation(), faction) {
+        new CalculateChunkTask(claim, faction, true) {
 
             @Override
             public void done() {

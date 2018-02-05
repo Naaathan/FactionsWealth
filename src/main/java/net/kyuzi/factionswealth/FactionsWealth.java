@@ -35,6 +35,10 @@ public class FactionsWealth extends JavaPlugin {
     private static FactionsWealth instance = null;
 
     private Map<Material, Double> blocks;
+    private CmdRecalculate cmdRecalculate;
+    private CmdRecalculateWealth cmdRecalculateWealth;
+    private CmdReload cmdReload;
+    private CmdWealth cmdWealth;
     private int factionsPerPage;
     private boolean includeChestContent;
     private Map<Material, Double> items;
@@ -106,9 +110,9 @@ public class FactionsWealth extends JavaPlugin {
 
         try {
             Class.forName("com.massivecraft.factions.P");
-            P.p.cmdBase.addSubCommand(new CmdRecalculate());
-            P.p.cmdBase.addSubCommand(new CmdRecalculateWealth());
-            P.p.cmdBase.addSubCommand(new CmdWealth());
+            P.p.cmdBase.addSubCommand((cmdRecalculate = new CmdRecalculate()));
+            P.p.cmdBase.addSubCommand((cmdRecalculateWealth = new CmdRecalculateWealth()));
+            P.p.cmdBase.addSubCommand((cmdWealth = new CmdWealth()));
             getLogger().info("Added wealth sub command to Factions!");
         } catch (ClassNotFoundException e) {
             getLogger().severe("Failed to add wealth sub command to Factions! Maybe your Factions version isn't supported?");
@@ -117,7 +121,7 @@ public class FactionsWealth extends JavaPlugin {
         }
 
         getLogger().info("Registering commands...");
-        getCommand("fwealthreload").setExecutor(new CmdReload());
+        getCommand("fwealthreload").setExecutor((cmdReload = new CmdReload()));
         getLogger().info("Registered commands!");
         getLogger().info("Registering listeners...");
         getServer().getPluginManager().registerEvents(new BasicListener(), this);
@@ -125,7 +129,7 @@ public class FactionsWealth extends JavaPlugin {
         getLogger().info("Loading hovers...");
 
         if (HoverUtils.getInstance() == null) {
-            getLogger().severe("Failed to chunk hovers!");
+            getLogger().severe("Failed to load hovers!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -134,7 +138,7 @@ public class FactionsWealth extends JavaPlugin {
         getLogger().info("Loading messages...");
 
         if (MessageUtils.getInstance() == null) {
-            getLogger().severe("Failed to chunk messages!");
+            getLogger().severe("Failed to load messages!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -191,6 +195,15 @@ public class FactionsWealth extends JavaPlugin {
     @Override
     public void onDisable() {
         getLogger().info("Disabling plugin...");
+
+        try {
+            Class.forName("com.massivecraft.factions.P");
+            P.p.cmdBase.subCommands.remove(cmdRecalculate);
+            P.p.cmdBase.subCommands.remove(cmdRecalculateWealth);
+            P.p.cmdBase.subCommands.remove(cmdWealth);
+            getLogger().info("Disabled wealth sub command in Factions!");
+        } catch (ClassNotFoundException ignored) {
+        }
 
         if (wealthUpdateTask != null) {
             List<WealthUpdate> updates = wealthUpdateTask.getUpdates();

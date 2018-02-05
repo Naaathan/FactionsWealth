@@ -59,6 +59,7 @@
             <artifactId>Factions</artifactId>
             <scope>system</scope>
             <systemPath>${lib.jars}/FactionsUUID.jar</systemPath>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>de.dustplanet</groupId>

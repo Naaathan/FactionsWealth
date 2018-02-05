@@ -10,9 +10,7 @@ import net.kyuzi.factionswealth.task.Task;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CalculateChunkTask extends Task {
@@ -23,8 +21,10 @@ public class CalculateChunkTask extends Task {
     private ChunkSnapshot claim;
     private Faction faction;
     private Map<EntityType, Integer> spawners;
+    private Map<BlockPos, Material> specialBlocks;
+    private boolean wasLoaded;
 
-    public CalculateChunkTask(ChunkSnapshot claim, Faction faction) {
+    public CalculateChunkTask(ChunkSnapshot claim, Faction faction, boolean wasLoaded) {
         super(true);
         this.blocks = new HashMap<>();
         this.chestBlockPositions = new HashMap<>();
@@ -32,6 +32,8 @@ public class CalculateChunkTask extends Task {
         this.claim = claim;
         this.faction = faction;
         this.spawners = new HashMap<>();
+        this.specialBlocks = new HashMap<>();
+        this.wasLoaded = wasLoaded;
     }
 
     @Override
@@ -46,6 +48,10 @@ public class CalculateChunkTask extends Task {
         return chestValue;
     }
 
+    public ChunkSnapshot getClaim() {
+        return claim;
+    }
+
     public Faction getFaction() {
         return faction;
     }
@@ -54,10 +60,16 @@ public class CalculateChunkTask extends Task {
         return spawners;
     }
 
+    public Map<BlockPos, Material> getSpecialBlocks() {
+        return specialBlocks;
+    }
+
+    public boolean wasLoaded() {
+        return wasLoaded;
+    }
+
     @Override
     public void run() {
-        List<CalculateSpecialBlockTask> calculateSpecialBlockTasks = new ArrayList<>();
-
         for (int y = 0; y < 256; y++) {
             if (claim.isSectionEmpty(y >> 4)) {
                 y += 15;
@@ -78,52 +90,18 @@ public class CalculateChunkTask extends Task {
                         case CHEST:
                         case TRAPPED_CHEST:
                             if (FactionsWealth.getInstance().shouldIncludeChestContent() && !hasAddedChest(blockPos, blockType)) {
-                                CalculateSpecialBlockTask calculateSpecialBlockTask = new CalculateSpecialBlockTask(blockPos, blockType) {
-
-                                    @Override
-                                    public void done() {
-                                        CalculateChunkTask.this.chestValue += this.getChestValue();
-                                    }
-
-                                };
-
-                                calculateSpecialBlockTask.start();
-                                calculateSpecialBlockTasks.add(calculateSpecialBlockTask);
                                 chestBlockPositions.put(blockPos, blockType);
+                                specialBlocks.put(blockPos, blockType);
                             }
+
                             break;
                         case MOB_SPAWNER:
-                            CalculateSpecialBlockTask calculateSpecialBlockTask = new CalculateSpecialBlockTask(blockPos, blockType) {
-
-                                @Override
-                                public void done() {
-                                    CalculateChunkTask.this.spawners.put(this.getSpawnerType(), CalculateChunkTask.this.spawners.getOrDefault(this.getSpawnerType(), 0) + 1);
-                                }
-
-                            };
-
-                            calculateSpecialBlockTask.start();
-                            calculateSpecialBlockTasks.add(calculateSpecialBlockTask);
+                            specialBlocks.put(blockPos, blockType);
                             break;
                         default:
                             blocks.put(blockType, blocks.getOrDefault(blockType, 0) + 1);
                     }
                 }
-            }
-        }
-
-        while (true) {
-            for (int i = 0; i < calculateSpecialBlockTasks.size(); i++) {
-                CalculateSpecialBlockTask task = calculateSpecialBlockTasks.get(i);
-
-                if (task.isComplete()) {
-                    calculateSpecialBlockTasks.remove(i);
-                    i--;
-                }
-            }
-
-            if (calculateSpecialBlockTasks.isEmpty()) {
-                break;
             }
         }
 

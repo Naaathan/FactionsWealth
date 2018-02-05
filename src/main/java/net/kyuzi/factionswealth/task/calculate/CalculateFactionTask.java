@@ -5,27 +5,30 @@ import com.massivecraft.factions.Faction;
 
 import net.kyuzi.factionswealth.FactionsWealth;
 import net.kyuzi.factionswealth.entity.ValuedFaction;
-import net.kyuzi.factionswealth.task.Task;
-import net.kyuzi.factionswealth.task.chunk.LoadChunkTask;
-import net.kyuzi.factionswealth.task.chunk.UnloadChunkTask;
+import net.kyuzi.factionswealth.location.BlockPos;
+import net.kyuzi.factionswealth.task.TimerTask;
 
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 
 import java.util.*;
 
-public class CalculateFactionTask extends Task {
+public class CalculateFactionTask extends TimerTask {
 
     private Map<Material, Integer> blocks;
+    private List<CalculateChunkTask> calculateChunkTasks;
     private double chestValue;
     private Faction faction;
+    private boolean firstTick;
     private Map<EntityType, Integer> spawners;
 
     public CalculateFactionTask(Faction faction) {
-        super(true);
+        super(false, 0L, 20L);
         this.blocks = new HashMap<>();
+        this.calculateChunkTasks = new ArrayList<>();
         this.chestValue = 0D;
         this.faction = faction;
+        this.firstTick = true;
         this.spawners = new HashMap<>();
     }
 
@@ -54,71 +57,72 @@ public class CalculateFactionTask extends Task {
 
     @Override
     public void run() {
-        Set<FLocation> claims = faction.getAllClaims();
+        if (firstTick) {
+            Set<FLocation> claims = faction.getAllClaims();
 
-        if (!claims.isEmpty()) {
-            final List<CalculateChunkTask> calculateChunkTasks = new ArrayList<>();
-            final List<LoadChunkTask> loadChunkTasks = new ArrayList<>();
+            if (!claims.isEmpty()) {
+                for (final FLocation claim : claims) {
+                    boolean loaded;
+                    World world = claim.getWorld();
 
-            for (final FLocation claim : claims) {
-                final World world = claim.getWorld();
-                LoadChunkTask loadChunkTask = new LoadChunkTask(claim.getWorldName(), (int) claim.getX(), (int) claim.getZ()) {
-
-                    @Override
-                    public void done() {
-                        final Chunk chunk = world.getChunkAt(getX(), getZ());
-                        CalculateChunkTask calculateChunkTask = new CalculateChunkTask(chunk.getChunkSnapshot(), faction) {
-
-                            @Override
-                            public void done() {
-                                if (wasLoaded()) {
-                                    new UnloadChunkTask(claim.getWorldName(), getX(), getZ()).start();
-                                }
-
-                                CalculateFactionTask.this.blocks.putAll(this.getBlocks());
-                                CalculateFactionTask.this.chestValue += this.getChestValue();
-                                CalculateFactionTask.this.spawners.putAll(this.getSpawners());
-                            }
-
-                        };
-
-                        calculateChunkTask.start();
-                        calculateChunkTasks.add(calculateChunkTask);
+                    if (!(loaded = world.isChunkLoaded((int) claim.getX(), (int) claim.getZ()))) {
+                        world.loadChunk((int) claim.getX(), (int) claim.getZ());
                     }
 
-                };
+                    Chunk chunk = world.getChunkAt((int) claim.getX(), (int) claim.getZ());
+                    ChunkSnapshot chunkSnapshot = chunk.getChunkSnapshot();
+                    CalculateChunkTask calculateChunkTask = new CalculateChunkTask(chunkSnapshot, faction, loaded) {
 
-                loadChunkTask.start();
-                loadChunkTasks.add(loadChunkTask);
+                        @Override
+                        public void done() {
+                            CalculateFactionTask.this.blocks.putAll(this.getBlocks());
+                        }
+
+                    };
+
+                    calculateChunkTask.start();
+                    calculateChunkTasks.add(calculateChunkTask);
+                }
             }
 
-            while (true) {
-                for (int i = 0; i < loadChunkTasks.size(); i++) {
-                    LoadChunkTask task = loadChunkTasks.get(i);
+            firstTick = false;
+        }
 
-                    if (task.isComplete()) {
-                        loadChunkTasks.remove(i);
-                        i--;
+        for (int i = 0; i < calculateChunkTasks.size(); i++) {
+            CalculateChunkTask calculateChunkTask = calculateChunkTasks.get(i);
+
+            if (calculateChunkTask.isComplete()) {
+                for (Map.Entry<BlockPos, Material> specialBlockEntry : calculateChunkTask.getSpecialBlocks().entrySet()) {
+                    switch (specialBlockEntry.getValue()) {
+                        case CHEST:
+                        case TRAPPED_CHEST:
+                            chestValue += specialBlockEntry.getKey().calculateChestValue();
+                            break;
+                        case MOB_SPAWNER:
+                            EntityType spawnerType = specialBlockEntry.getKey().findSpawnerType();
+                            spawners.put(spawnerType, spawners.getOrDefault(spawnerType, 0) + 1);
                     }
                 }
 
-                for (int i = 0; i < calculateChunkTasks.size(); i++) {
-                    CalculateChunkTask task = calculateChunkTasks.get(i);
+                if (calculateChunkTask.wasLoaded()) {
+                    ChunkSnapshot claim = calculateChunkTask.getClaim();
+                    World world = Bukkit.getWorld(claim.getWorldName());
 
-                    if (task.isComplete()) {
-                        calculateChunkTasks.remove(i);
-                        i--;
+                    if (world != null) {
+                        world.getChunkAt(claim.getX(), claim.getZ()).unload();
                     }
                 }
 
-                if (loadChunkTasks.isEmpty() && calculateChunkTasks.isEmpty()) {
-                    break;
-                }
+                calculateChunkTasks.remove(i);
+                i--;
             }
         }
 
-        complete = true;
-        done();
+        if (calculateChunkTasks.isEmpty()) {
+            complete = true;
+            done();
+            cancel();
+        }
     }
 
 }

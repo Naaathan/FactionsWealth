@@ -15,11 +15,11 @@ public class HoverUtils {
 
     private static final String[] DEFAULT_HEADER = new String[]{"&b{faction}&e's Overview:", "", ""};
     private static final String[] DEFAULT_BLOCKS_HEADER = new String[]{"&b&lBLOCKS", ""};
-    private static final String[] DEFAULT_BLOCKS_INNER = new String[]{"&eEmerald Block: &d{EMERALD_BLOCK}", "", ""};
+    private static final String[] DEFAULT_BLOCKS_INNER = new String[]{"&eEmerald Block: &d{EMERALD_BLOCK}", ""};
     private static final String[] DEFAULT_SPAWNERS_HEADER = new String[]{"&b&lSPAWNERS", ""};
-    private static final String[] DEFAULT_SPAWNERS_INNER = new String[]{"&eIron Golem: &d{IRON_GOLEM}", "", ""};
+    private static final String[] DEFAULT_SPAWNERS_INNER = new String[]{"&eIron Golem: &d{IRON_GOLEM}", ""};
     private static final String[] DEFAULT_VALUES_HEADER = new String[]{"&b&lVALUES", ""};
-    private static final String[] DEFAULT_VALUES_INNER = new String[]{"&eBlock Value: &d${BLOCK_VALUE}", "", "&eChest Value: &d${CHEST_VALUE}", "", "&eSpawner Value: &d${SPAWNER_VALUE}", "", "&eTotal Value: &d${TOTAL_VALUE}"};
+    private static final String[] DEFAULT_VALUES_INNER = new String[]{"&eBlock Value: &d${BLOCK_VALUE}", "&eChest Value: &d${CHEST_VALUE}", "&eSpawner Value: &d${SPAWNER_VALUE}", "&eTotal Value: &d${TOTAL_VALUE}"};
     private static final String[] DEFAULT_FOOTER = new String[]{};
 
     private static HoverUtils instance;

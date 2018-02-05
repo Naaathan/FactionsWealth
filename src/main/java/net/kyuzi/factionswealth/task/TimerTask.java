@@ -15,7 +15,7 @@ public abstract class TimerTask extends Task {
     }
 
     @Override
-    public final void done() {
+    public void done() {
     }
 
     @Override
