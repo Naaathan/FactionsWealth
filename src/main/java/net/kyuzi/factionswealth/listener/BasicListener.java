@@ -15,7 +15,6 @@ import net.kyuzi.factionswealth.task.update.WealthUpdateTask;
 import net.kyuzi.factionswealth.utility.InventoryUtils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -47,12 +46,8 @@ public class BasicListener implements Listener {
         this.startInventories = new HashMap<>();
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         WealthUpdateTask wealthUpdateTask = FactionsWealth.getInstance().getWealthUpdateTask();
 
         if (wealthUpdateTask == null) {
@@ -72,12 +67,8 @@ public class BasicListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockExplode(BlockExplodeEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         WealthUpdateTask wealthUpdateTask = FactionsWealth.getInstance().getWealthUpdateTask();
 
         if (wealthUpdateTask == null) {
@@ -87,12 +78,8 @@ public class BasicListener implements Listener {
         explosionUpdate(e.blockList(), wealthUpdateTask);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         WealthUpdateTask wealthUpdateTask = FactionsWealth.getInstance().getWealthUpdateTask();
 
         if (wealthUpdateTask == null) {
@@ -108,12 +95,8 @@ public class BasicListener implements Listener {
         wealthUpdateTask.updateWealth(block, e.getPlayer(), new WealthUpdate.BlockUpdate(Operator.ADD, block.getType()));
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         WealthUpdateTask wealthUpdateTask = FactionsWealth.getInstance().getWealthUpdateTask();
 
         if (wealthUpdateTask == null) {
@@ -123,12 +106,8 @@ public class BasicListener implements Listener {
         explosionUpdate(e.blockList(), wealthUpdateTask);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFactionCreate(FactionCreateEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         if (Factions.getInstance() instanceof JSONFactions) {
             JSONFactions factions = (JSONFactions) Factions.getInstance();
 
@@ -136,12 +115,8 @@ public class BasicListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFactionDisband(FactionDisbandEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         FactionsWealth.getInstance().getStorage().removeValuedFaction(e.getFaction().getId());
     }
 
@@ -207,12 +182,8 @@ public class BasicListener implements Listener {
         startInventories.put(player.getUniqueId(), InventoryUtils.calculateChestValue(inventory.getContents()));
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onLandClaim(LandClaimEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         Faction faction = e.getFaction();
         FLocation location = e.getLocation();
         ChunkSnapshot claim = location.getWorld().getChunkAt((int) location.getX(), (int) location.getZ()).getChunkSnapshot();
@@ -233,12 +204,8 @@ public class BasicListener implements Listener {
         }.start();
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onLandUnclaim(LandUnclaimEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         Faction faction = e.getFaction();
         FLocation location = e.getLocation();
         ChunkSnapshot claim = location.getWorld().getChunkAt((int) location.getX(), (int) location.getZ()).getChunkSnapshot();
@@ -259,12 +226,8 @@ public class BasicListener implements Listener {
         }.start();
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onLandUnclaimAll(LandUnclaimAllEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         Faction faction = e.getFaction();
         ValuedFaction valuedFaction = FactionsWealth.getInstance().getStorage().getValuedFaction(faction.getId());
 

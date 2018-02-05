@@ -10,8 +10,6 @@ import net.kyuzi.factionswealth.task.calculate.CalculateFactionTask;
 import net.kyuzi.factionswealth.task.calculate.CalculateTask;
 import net.kyuzi.factionswealth.utility.MessageUtils;
 
-import java.util.List;
-
 public class CmdRecalculate extends FCommand {
 
     public CmdRecalculate() {

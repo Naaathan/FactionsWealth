@@ -3,8 +3,8 @@ package net.kyuzi.factionswealth.storage;
 import net.kyuzi.factionswealth.FactionsWealth;
 import net.kyuzi.factionswealth.entity.ValuedFaction;
 import net.kyuzi.factionswealth.exception.StorageFailureException;
-
 import net.kyuzi.factionswealth.utility.BukkitUtils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;

@@ -1,7 +1,6 @@
 package net.kyuzi.factionswealth.task;
 
 import net.kyuzi.factionswealth.FactionsWealth;
-import net.kyuzi.factionswealth.task.Task;
 
 public abstract class TimerTask extends Task {
 

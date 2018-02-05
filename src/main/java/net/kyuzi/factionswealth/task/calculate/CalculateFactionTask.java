@@ -5,7 +5,6 @@ import com.massivecraft.factions.Faction;
 
 import net.kyuzi.factionswealth.FactionsWealth;
 import net.kyuzi.factionswealth.entity.ValuedFaction;
-import net.kyuzi.factionswealth.location.BlockPos;
 import net.kyuzi.factionswealth.task.TimerTask;
 
 import org.bukkit.*;
