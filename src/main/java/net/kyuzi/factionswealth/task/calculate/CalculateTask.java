@@ -8,7 +8,7 @@ import net.kyuzi.factionswealth.utility.FactionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CalculateTask extends Task {
+public class CalculateTask extends Task {
 
     private List<CalculateFactionTask> calculateFactionTasks;
     private List<Faction> factions;
@@ -17,6 +17,10 @@ public abstract class CalculateTask extends Task {
         super(true);
         this.calculateFactionTasks = new ArrayList<>();
         this.factions = factions;
+    }
+
+    @Override
+    public void done() {
     }
 
     @Override

@@ -6,7 +6,7 @@ import net.kyuzi.factionswealth.task.Task;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 
-public abstract class CalculateSpecialBlockTask extends Task {
+public class CalculateSpecialBlockTask extends Task {
 
     private BlockPos blockPos;
     private Material blockType;
@@ -19,6 +19,10 @@ public abstract class CalculateSpecialBlockTask extends Task {
         this.blockType = blockType;
         this.chestValue = 0D;
         this.spawnerType = null;
+    }
+
+    @Override
+    public void done() {
     }
 
     public BlockPos getBlockPos() {

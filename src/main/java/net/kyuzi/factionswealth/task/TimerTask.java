@@ -5,8 +5,8 @@ import net.kyuzi.factionswealth.task.Task;
 
 public abstract class TimerTask extends Task {
 
-    private long delay;
-    private long period;
+    protected long delay;
+    protected long period;
 
     protected TimerTask(boolean async, long delay, long period) {
         super(async);

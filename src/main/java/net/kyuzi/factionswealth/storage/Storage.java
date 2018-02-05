@@ -13,7 +13,7 @@ import java.util.*;
 public abstract class Storage {
 
     protected List<ValuedFaction> valuedFactions;
-    private StorageType type;
+    protected StorageType type;
 
     protected Storage(StorageType type) {
         this.valuedFactions = new ArrayList<>();

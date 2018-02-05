@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class CalculateChunkTask extends Task {
+public class CalculateChunkTask extends Task {
 
     private Map<Material, Integer> blocks;
     private Map<BlockPos, Material> chestBlockPositions;
@@ -32,6 +32,10 @@ public abstract class CalculateChunkTask extends Task {
         this.claim = claim;
         this.faction = faction;
         this.spawners = new HashMap<>();
+    }
+
+    @Override
+    public void done() {
     }
 
     public Map<Material, Integer> getBlocks() {

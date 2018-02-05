@@ -4,15 +4,19 @@ import net.kyuzi.factionswealth.task.Task;
 
 public abstract class ChunkTask extends Task {
 
-    private String worldName;
-    private int x;
-    private int z;
+    protected String worldName;
+    protected int x;
+    protected int z;
 
     public ChunkTask(String worldName, int x, int z) {
         super(false);
         this.worldName = worldName;
         this.x = x;
         this.z = z;
+    }
+
+    @Override
+    public void done() {
     }
 
     public String getWorldName() {

@@ -4,7 +4,7 @@ import net.kyuzi.factionswealth.exception.HookFailureException;
 
 public class Hook<T> {
 
-    private final T instance;
+    protected final T instance;
 
     protected Hook(T instance) throws HookFailureException {
         if (instance == null) {

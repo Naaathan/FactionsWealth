@@ -14,10 +14,6 @@ public class LoadChunkTask extends ChunkTask {
     }
 
     @Override
-    public void done() {
-    }
-
-    @Override
     public void run() {
         World world = Bukkit.getWorld(getWorldName());
 
