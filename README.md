@@ -11,6 +11,6 @@ Calculate the wealth of a faction from their claimed land. Configurable messages
 
 #### Setting up your project
 After cloning the repository, create a folder in your project's base directory named `lib`. In this folder, the following external plugin JAR files are required:
-* FactionsUUID (Named `Factions.jar`).
+* FactionsUUID (Named `FactionsUUID.jar`).
 
 **When new versions of dependencies are added, the names of their JAR files may change in the project's** `pom.xml` **file.**
