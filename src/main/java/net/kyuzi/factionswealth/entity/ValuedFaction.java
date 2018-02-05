@@ -2,7 +2,7 @@ package net.kyuzi.factionswealth.entity;
 
 import net.kyuzi.factionswealth.FactionsWealth;
 
-import net.kyuzi.factionswealth.Operator;
+import net.kyuzi.factionswealth.utility.Operator;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 

@@ -1,4 +1,4 @@
-package net.kyuzi.factionswealth;
+package net.kyuzi.factionswealth.utility;
 
 public enum Operator {
 

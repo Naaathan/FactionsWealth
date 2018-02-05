@@ -1,16 +1,13 @@
 package net.kyuzi.factionswealth.task.calculate;
 
-import com.massivecraft.factions.FLocation;
 import com.massivecraft.factions.Faction;
 
 import net.kyuzi.factionswealth.FactionsWealth;
+import net.kyuzi.factionswealth.location.BlockPos;
+import net.kyuzi.factionswealth.location.ChunkPos;
 import net.kyuzi.factionswealth.task.Task;
-import net.kyuzi.factionswealth.utility.InventoryUtils;
+
 import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.block.CreatureSpawner;
-import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
@@ -21,16 +18,16 @@ import java.util.Map;
 public abstract class CalculateChunkTask extends Task {
 
     private Map<Material, Integer> blocks;
-    private List<Block> chestBlocks;
+    private Map<BlockPos, Material> chestBlockPositions;
     private double chestValue;
-    private FLocation claim;
+    private ChunkSnapshot claim;
     private Faction faction;
     private Map<EntityType, Integer> spawners;
 
-    public CalculateChunkTask(FLocation claim, Faction faction) {
+    public CalculateChunkTask(ChunkSnapshot claim, Faction faction) {
         super(true);
         this.blocks = new HashMap<>();
-        this.chestBlocks = new ArrayList<>();
+        this.chestBlockPositions = new HashMap<>();
         this.chestValue = 0D;
         this.claim = claim;
         this.faction = faction;
@@ -55,53 +52,74 @@ public abstract class CalculateChunkTask extends Task {
 
     @Override
     public void run() {
-        World world = claim.getWorld();
+        List<CalculateSpecialBlockTask> calculateSpecialBlockTasks = new ArrayList<>();
 
-        if (world == null) {
-            return;
-        }
-
-        Chunk chunk = world.getChunkAt((int) claim.getX(), (int) claim.getZ());
-
-        if (chunk == null) {
-            return;
-        }
-
-        ChunkSnapshot snapshot = chunk.getChunkSnapshot();
-
-        for (int y = 0; y < world.getMaxHeight(); y++) {
-            if (snapshot.isSectionEmpty(y >> 4)) {
+        for (int y = 0; y < 256; y++) {
+            if (claim.isSectionEmpty(y >> 4)) {
                 y += 15;
                 continue;
             }
 
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
-                    Block block = chunk.getBlock(x, y, z);
+                    Material blockType = Material.getMaterial(claim.getBlockTypeId(x, y, z));
 
-                    if (block == null) {
+                    if (blockType == null) {
                         continue;
                     }
 
-                    if (block.getState() instanceof Chest) {
-                        if (FactionsWealth.getInstance().shouldIncludeChestContent()) {
-                            chestValue += InventoryUtils.calculateChestValue(((Chest) block.getState()).getBlockInventory().getContents());
-                        }
-                    } else if (block.getState() instanceof CreatureSpawner) {
-                        EntityType entityType = ((CreatureSpawner) block.getState()).getSpawnedType();
-                        spawners.put(entityType, spawners.getOrDefault(entityType, 0) + 1);
-                    } else if (block.getState() instanceof DoubleChest) {
-                        if (FactionsWealth.getInstance().shouldIncludeChestContent()) {
-                            if (!hasAddedChest(block)) {
-                                chestBlocks.add(block);
-                                chestValue += InventoryUtils.calculateChestValue(((DoubleChest) block.getState()).getInventory().getContents());
+                    BlockPos blockPos = new BlockPos(new ChunkPos(claim.getWorldName(), claim.getX(), claim.getZ()), x, y, z);
+
+                    switch (blockType) {
+                        case CHEST:
+                        case TRAPPED_CHEST:
+                            if (FactionsWealth.getInstance().shouldIncludeChestContent() && !hasAddedChest(blockPos, blockType)) {
+                                CalculateSpecialBlockTask calculateSpecialBlockTask = new CalculateSpecialBlockTask(blockPos, blockType) {
+
+                                    @Override
+                                    public void done() {
+                                        CalculateChunkTask.this.chestValue += this.getChestValue();
+                                    }
+
+                                };
+
+                                calculateSpecialBlockTask.start();
+                                calculateSpecialBlockTasks.add(calculateSpecialBlockTask);
+                                chestBlockPositions.put(blockPos, blockType);
                             }
-                        }
-                    } else {
-                        Material type = block.getType();
-                        blocks.put(type, blocks.getOrDefault(type, 0) + 1);
+                            break;
+                        case MOB_SPAWNER:
+                            CalculateSpecialBlockTask calculateSpecialBlockTask = new CalculateSpecialBlockTask(blockPos, blockType) {
+
+                                @Override
+                                public void done() {
+                                    CalculateChunkTask.this.spawners.put(this.getSpawnerType(), CalculateChunkTask.this.spawners.getOrDefault(this.getSpawnerType(), 0) + 1);
+                                }
+
+                            };
+
+                            calculateSpecialBlockTask.start();
+                            calculateSpecialBlockTasks.add(calculateSpecialBlockTask);
+                            break;
+                        default:
+                            blocks.put(blockType, blocks.getOrDefault(blockType, 0) + 1);
                     }
                 }
+            }
+        }
+
+        while (true) {
+            for (int i = 0; i < calculateSpecialBlockTasks.size(); i++) {
+                CalculateSpecialBlockTask task = calculateSpecialBlockTasks.get(i);
+
+                if (task.isComplete()) {
+                    calculateSpecialBlockTasks.remove(i);
+                    i--;
+                }
+            }
+
+            if (calculateSpecialBlockTasks.isEmpty()) {
+                break;
             }
         }
 
@@ -109,12 +127,17 @@ public abstract class CalculateChunkTask extends Task {
         done();
     }
 
-    private boolean hasAddedChest(Block block) {
-        if (!chestBlocks.isEmpty()) {
-            for (Block chestBlock : chestBlocks) {
-                if (block.getType() == chestBlock.getType() && block.getY() == chestBlock.getY()) {
-                    if ((block.getX() == chestBlock.getX() && Math.abs(block.getZ() - chestBlock.getZ()) == 1) || (Math.abs(block.getX() - chestBlock.getX()) == 1 && block.getZ() == chestBlock.getZ())) {
-                        return true;
+    private boolean hasAddedChest(BlockPos blockPos, Material blockType) {
+        if (!chestBlockPositions.isEmpty()) {
+            for (Map.Entry<BlockPos, Material> chestBlockPosEntry : chestBlockPositions.entrySet()) {
+                BlockPos chestBlockPos = chestBlockPosEntry.getKey();
+                Material chestBlockType = chestBlockPosEntry.getValue();
+
+                if (blockType == chestBlockType && blockPos.getChunkPos().equals(chestBlockPos.getChunkPos())) {
+                    if (blockPos.getY() == chestBlockPos.getY()) {
+                        if ((blockPos.getX() == chestBlockPos.getX() && Math.abs(blockPos.getZ() - chestBlockPos.getZ()) == 1) || (Math.abs(blockPos.getX() - chestBlockPos.getX()) == 1 && blockPos.getZ() == chestBlockPos.getZ())) {
+                            return true;
+                        }
                     }
                 }
             }

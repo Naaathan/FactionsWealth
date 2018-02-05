@@ -5,7 +5,7 @@ import de.dustplanet.silkspawners.events.SilkSpawnersSpawnerChangeEvent;
 import de.dustplanet.silkspawners.events.SilkSpawnersSpawnerPlaceEvent;
 
 import net.kyuzi.factionswealth.FactionsWealth;
-import net.kyuzi.factionswealth.Operator;
+import net.kyuzi.factionswealth.utility.Operator;
 import net.kyuzi.factionswealth.task.update.WealthUpdate;
 import net.kyuzi.factionswealth.task.update.WealthUpdateTask;
 

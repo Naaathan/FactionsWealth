@@ -1,7 +1,7 @@
 package net.kyuzi.factionswealth.task.update;
 
 import net.kyuzi.factionswealth.FactionsWealth;
-import net.kyuzi.factionswealth.Operator;
+import net.kyuzi.factionswealth.utility.Operator;
 import net.kyuzi.factionswealth.entity.ValuedFaction;
 
 import org.bukkit.Material;

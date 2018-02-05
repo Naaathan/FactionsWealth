@@ -125,7 +125,7 @@ public class FactionsWealth extends JavaPlugin {
         getLogger().info("Loading hovers...");
 
         if (HoverUtils.getInstance() == null) {
-            getLogger().severe("Failed to load hovers!");
+            getLogger().severe("Failed to chunk hovers!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -134,7 +134,7 @@ public class FactionsWealth extends JavaPlugin {
         getLogger().info("Loading messages...");
 
         if (MessageUtils.getInstance() == null) {
-            getLogger().severe("Failed to load messages!");
+            getLogger().severe("Failed to chunk messages!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }

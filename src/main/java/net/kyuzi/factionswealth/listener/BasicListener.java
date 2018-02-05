@@ -6,7 +6,7 @@ import com.massivecraft.factions.event.*;
 import com.massivecraft.factions.zcore.persist.json.JSONFactions;
 
 import net.kyuzi.factionswealth.FactionsWealth;
-import net.kyuzi.factionswealth.Operator;
+import net.kyuzi.factionswealth.utility.Operator;
 import net.kyuzi.factionswealth.entity.ValuedFaction;
 import net.kyuzi.factionswealth.task.calculate.CalculateChunkTask;
 import net.kyuzi.factionswealth.task.update.WealthUpdate;
