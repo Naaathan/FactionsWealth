@@ -92,19 +92,9 @@ public class CalculateFactionTask extends TimerTask {
             CalculateChunkTask calculateChunkTask = calculateChunkTasks.get(i);
 
             if (calculateChunkTask.isComplete()) {
-                for (Map.Entry<BlockPos, Material> specialBlockEntry : calculateChunkTask.getSpecialBlocks().entrySet()) {
-                    switch (specialBlockEntry.getValue()) {
-                        case CHEST:
-                        case TRAPPED_CHEST:
-                            chestValue += specialBlockEntry.getKey().calculateChestValue();
-                            break;
-                        case MOB_SPAWNER:
-                            EntityType spawnerType = specialBlockEntry.getKey().findSpawnerType();
-                            spawners.put(spawnerType, spawners.getOrDefault(spawnerType, 0) + 1);
-                    }
-                }
+                calculateChunkTask.addSpecialBlocks();
 
-                if (calculateChunkTask.wasLoaded()) {
+                if (!calculateChunkTask.wasLoaded()) {
                     ChunkSnapshot claim = calculateChunkTask.getClaim();
                     World world = Bukkit.getWorld(claim.getWorldName());
 

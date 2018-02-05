@@ -14,6 +14,7 @@ import net.kyuzi.factionswealth.task.update.WealthUpdate;
 import net.kyuzi.factionswealth.task.update.WealthUpdateTask;
 import net.kyuzi.factionswealth.utility.InventoryUtils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
@@ -220,10 +221,13 @@ public class BasicListener implements Listener {
 
             @Override
             public void done() {
-                ValuedFaction valuedFaction = FactionsWealth.getInstance().getStorage().getValuedFaction(faction.getId());
+                Bukkit.getScheduler().runTask(FactionsWealth.getInstance(), () -> {
+                    ValuedFaction valuedFaction = FactionsWealth.getInstance().getStorage().getValuedFaction(faction.getId());
 
-                valuedFaction.merge(Operator.ADD, this.getBlocks(), this.getChestValue(), this.getSpawners());
-                FactionsWealth.getInstance().getStorage().addValuedFaction(valuedFaction);
+                    addSpecialBlocks();
+                    valuedFaction.merge(Operator.ADD, this.getBlocks(), this.getChestValue(), this.getSpawners());
+                    FactionsWealth.getInstance().getStorage().addValuedFaction(valuedFaction);
+                });
             }
 
         }.start();
@@ -243,10 +247,13 @@ public class BasicListener implements Listener {
 
             @Override
             public void done() {
-                ValuedFaction valuedFaction = FactionsWealth.getInstance().getStorage().getValuedFaction(faction.getId());
+                Bukkit.getScheduler().runTask(FactionsWealth.getInstance(), () -> {
+                    ValuedFaction valuedFaction = FactionsWealth.getInstance().getStorage().getValuedFaction(faction.getId());
 
-                valuedFaction.merge(Operator.SUBTRACT, this.getBlocks(), this.getChestValue(), this.getSpawners());
-                FactionsWealth.getInstance().getStorage().addValuedFaction(valuedFaction);
+                    addSpecialBlocks();
+                    valuedFaction.merge(Operator.SUBTRACT, this.getBlocks(), this.getChestValue(), this.getSpawners());
+                    FactionsWealth.getInstance().getStorage().addValuedFaction(valuedFaction);
+                });
             }
 
         }.start();

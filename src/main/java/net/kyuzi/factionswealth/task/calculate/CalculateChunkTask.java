@@ -36,6 +36,22 @@ public class CalculateChunkTask extends Task {
         this.wasLoaded = wasLoaded;
     }
 
+    public void addSpecialBlocks() {
+        if (!specialBlocks.isEmpty()) {
+            for (Map.Entry<BlockPos, Material> specialBlockEntry : specialBlocks.entrySet()) {
+                switch (specialBlockEntry.getValue()) {
+                    case CHEST:
+                    case TRAPPED_CHEST:
+                        chestValue += specialBlockEntry.getKey().calculateChestValue();
+                        break;
+                    case MOB_SPAWNER:
+                        EntityType spawnerType = specialBlockEntry.getKey().findSpawnerType();
+                        spawners.put(spawnerType, spawners.getOrDefault(spawnerType, 0) + 1);
+                }
+            }
+        }
+    }
+
     @Override
     public void done() {
     }
