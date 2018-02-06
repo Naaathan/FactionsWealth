@@ -23,7 +23,9 @@ public class MessageUtils {
     private static final String DEFAULT_TASK_STARTED = "&eYou have started a recalculation task!";
     private static final String DEFAULT_TASK_STOPPED = "&eYou have stopped the recalculation task!";
     private static final String DEFAULT_WEALTH_FOOTER = "&ePage: &7{current_page}&8/&6{final_page}";
+    private static final boolean DEFAULT_WEALTH_FOOTER_TITLEISE = true;
     private static final String DEFAULT_WEALTH_HEADER = "&eFactions Wealth Leaderboard";
+    private static final boolean DEFAULT_WEALTH_HEADER_TITLEISE = true;
     private static final String DEFAULT_WEALTH_MESSAGE = "&e{position}. &b{faction}&e: &d${wealth}";
 
     private static MessageUtils instance;
@@ -40,7 +42,9 @@ public class MessageUtils {
     public final String TASK_STARTED;
     public final String TASK_STOPPED;
     public final String WEALTH_FOOTER;
+    public final boolean WEALTH_FOOTER_TITLEISE;
     public final String WEALTH_HEADER;
+    public final boolean WEALTH_HEADER_TITLEISE;
     public final String WEALTH_MESSAGE;
 
     private MessageUtils() throws IOException {
@@ -138,11 +142,25 @@ public class MessageUtils {
             WEALTH_FOOTER = prepareMessage(DEFAULT_WEALTH_FOOTER);
         }
 
+        if (config.contains("wealth_footer_titleise")) {
+            WEALTH_FOOTER_TITLEISE = config.getBoolean("wealth_footer_titleise");
+        } else {
+            config.set("wealth_footer_titleise", DEFAULT_WEALTH_FOOTER_TITLEISE);
+            WEALTH_FOOTER_TITLEISE = DEFAULT_WEALTH_FOOTER_TITLEISE;
+        }
+
         if (config.contains("wealth_header")) {
             WEALTH_HEADER = prepareMessage(config.getString("wealth_header"));
         } else {
             config.set("wealth_header", DEFAULT_WEALTH_HEADER);
             WEALTH_HEADER = prepareMessage(DEFAULT_WEALTH_HEADER);
+        }
+
+        if (config.contains("wealth_header_titleise")) {
+            WEALTH_HEADER_TITLEISE = config.getBoolean("wealth_header_titleise");
+        } else {
+            config.set("wealth_header_titleise", DEFAULT_WEALTH_HEADER_TITLEISE);
+            WEALTH_HEADER_TITLEISE = DEFAULT_WEALTH_HEADER_TITLEISE;
         }
 
         if (config.contains("wealth_message")) {

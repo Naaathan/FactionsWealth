@@ -92,9 +92,13 @@ public class CmdWealth extends FCommand {
 
         if (page > pages) {
             page = pages;
+        } else if (page < 1) {
+            page = 1;
         }
 
-        msg(p.txt.titleize(MessageUtils.getInstance().WEALTH_HEADER.replace("{current_page}", "" + page).replace("{final_page}", "" + pages)));
+        String headerMessage = MessageUtils.getInstance().WEALTH_HEADER.replace("{current_page}", "" + page).replace("{final_page}", "" + pages);
+
+        msg(MessageUtils.getInstance().WEALTH_HEADER_TITLEISE ? p.txt.titleize(headerMessage) : headerMessage);
         msg("");
 
         int max = factionsPerPage * page;
@@ -140,7 +144,7 @@ public class CmdWealth extends FCommand {
 
                             int amount = valuedFaction.getBlocks().getOrDefault(material, 0);
 
-                            if (amount > 0) {
+                            if (amount > 0 || HoverUtils.getInstance().DISPLAY_ZERO_VALUES) {
                                 includeNextBlock = true;
                                 tooltipTemp.append(inner.replace("{" + extractedPlaceholder + "}", "" + amount)).append("\n");
                             }
@@ -178,7 +182,7 @@ public class CmdWealth extends FCommand {
 
                             int amount = valuedFaction.getSpawners().getOrDefault(entityType, 0);
 
-                            if (amount > 0) {
+                            if (amount > 0 || HoverUtils.getInstance().DISPLAY_ZERO_VALUES) {
                                 includeNextBlock = true;
                                 tooltipTemp.append(inner.replace("{" + extractedPlaceholder + "}", "" + amount)).append("\n");
                             }
@@ -254,8 +258,10 @@ public class CmdWealth extends FCommand {
             }
         }
 
+        String footerMessage = MessageUtils.getInstance().WEALTH_FOOTER.replace("{current_page}", "" + page).replace("{final_page}", "" + pages);
+
         msg("");
-        msg(p.txt.titleize(MessageUtils.getInstance().WEALTH_FOOTER.replace("{current_page}", "" + page).replace("{final_page}", "" + pages)));
+        msg(MessageUtils.getInstance().WEALTH_FOOTER_TITLEISE ? p.txt.titleize(footerMessage) : footerMessage);
     }
 
     private List<String> extractPlaceholders(String string) {

@@ -13,6 +13,7 @@ import java.util.List;
 
 public class HoverUtils {
 
+    private static final boolean DEFAULT_DISPLAY_ZERO_VALUES = false;
     private static final String[] DEFAULT_HEADER = new String[]{"&b{faction}&e's Overview:", "", ""};
     private static final String[] DEFAULT_BLOCKS_HEADER = new String[]{"&b&lBLOCKS", ""};
     private static final String[] DEFAULT_BLOCKS_INNER = new String[]{"&eEmerald Block: &d{EMERALD_BLOCK}", ""};
@@ -24,6 +25,7 @@ public class HoverUtils {
 
     private static HoverUtils instance;
 
+    public final boolean DISPLAY_ZERO_VALUES;
     public final String[] HEADER;
     public final String[] BLOCKS_HEADER;
     public final String[] BLOCKS_INNER;
@@ -44,6 +46,13 @@ public class HoverUtils {
 
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
         List<String> temp = new ArrayList<>();
+
+        if (config.contains("display_zero_values")) {
+            DISPLAY_ZERO_VALUES = config.getBoolean("display_zero_values");
+        } else {
+            config.set("display_zero_values", DEFAULT_DISPLAY_ZERO_VALUES);
+            DISPLAY_ZERO_VALUES = DEFAULT_DISPLAY_ZERO_VALUES;
+        }
 
         if (config.contains("header")) {
             for (String string : config.getStringList("header")) {
