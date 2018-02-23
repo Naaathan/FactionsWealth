@@ -34,7 +34,7 @@ public class PlaceholderAPIHook {
 
             @Override
             public String onPlaceholderRequest(Player player, String identifier) {
-                if (identifier.contains("factions_wealth_")) {
+                if (identifier.toLowerCase().contains("factions_wealth_")) {
                     String positionString = identifier.replace("factions_wealth_", "");
                     int position;
 
