@@ -8,6 +8,7 @@ import net.kyuzi.factionswealth.command.CmdReload;
 import net.kyuzi.factionswealth.command.factions.CmdWealth;
 import net.kyuzi.factionswealth.exception.HookFailureException;
 import net.kyuzi.factionswealth.exception.StorageFailureException;
+import net.kyuzi.factionswealth.hook.PlaceholderAPIHook;
 import net.kyuzi.factionswealth.hook.SilkSpawnersHook;
 import net.kyuzi.factionswealth.listener.BasicListener;
 import net.kyuzi.factionswealth.listener.SilkSpawnersListener;
@@ -31,6 +32,7 @@ import java.util.*;
 
 public class FactionsWealth extends JavaPlugin {
 
+    private static boolean hookedPlaceholderAPI = false;
     private static boolean hookedSilkSpawners = false;
     private static FactionsWealth instance = null;
 
@@ -42,11 +44,16 @@ public class FactionsWealth extends JavaPlugin {
     private int factionsPerPage;
     private boolean includeChestContent;
     private Map<Material, Double> items;
+    private PlaceholderAPIHook placeholderAPIHook;
     private SilkSpawnersHook silkSpawnersHook;
     private Map<EntityType, Double> spawners;
     private CalculateTask recalculateTask;
     private Storage storage;
     private WealthUpdateTask wealthUpdateTask;
+
+    public static boolean isHookedPlaceholderAPI() {
+        return hookedPlaceholderAPI;
+    }
 
     public static boolean isHookedSilkSpawners() {
         return hookedSilkSpawners;
@@ -70,6 +77,10 @@ public class FactionsWealth extends JavaPlugin {
 
     public Map<Material, Double> getItems() {
         return items;
+    }
+
+    public PlaceholderAPIHook getPlaceholderAPIHook() {
+        return placeholderAPIHook;
     }
 
     public SilkSpawnersHook getSilkSpawnersHook() {
@@ -196,6 +207,8 @@ public class FactionsWealth extends JavaPlugin {
     public void onDisable() {
         getLogger().info("Disabling plugin...");
 
+        getCommand("fwealthreload").setExecutor(null);
+
         try {
             Class.forName("com.massivecraft.factions.P");
             P.p.cmdBase.subCommands.remove(cmdRecalculate);
@@ -203,6 +216,10 @@ public class FactionsWealth extends JavaPlugin {
             P.p.cmdBase.subCommands.remove(cmdWealth);
             getLogger().info("Disabled wealth sub command in Factions!");
         } catch (ClassNotFoundException ignored) {
+        }
+
+        if (hookedPlaceholderAPI) {
+            placeholderAPIHook.unregisterPlaceholders();
         }
 
         if (wealthUpdateTask != null) {
@@ -233,6 +250,21 @@ public class FactionsWealth extends JavaPlugin {
             return;
         }
 
+        if ((hookedPlaceholderAPI = getServer().getPluginManager().isPluginEnabled("PlaceholderAPI"))) {
+            try {
+                placeholderAPIHook = new PlaceholderAPIHook();
+
+                placeholderAPIHook.registerPlaceholders();
+                getLogger().info("PlaceholderAPI soft dependency found!");
+            } catch (HookFailureException e) {
+                hookedPlaceholderAPI = false;
+
+                getLogger().warning("PlaceholderAPI soft dependency found but its class was not!");
+            }
+        } else {
+            getLogger().warning("PlaceholderAPI soft dependency not found, rankings placeholders will not work!");
+        }
+
         if ((hookedSilkSpawners = getServer().getPluginManager().isPluginEnabled("SilkSpawners"))) {
             try {
                 silkSpawnersHook = new SilkSpawnersHook();
@@ -242,7 +274,7 @@ public class FactionsWealth extends JavaPlugin {
             } catch (HookFailureException e) {
                 hookedSilkSpawners = false;
 
-                getLogger().warning("SilkSpawners soft dependency found but its instance was not!");
+                getLogger().warning("SilkSpawners soft dependency found but its class was not!");
             }
         } else {
             getLogger().warning("SilkSpawners soft dependency not found, chest spawners may not work completely!");

@@ -45,6 +45,14 @@ public abstract class Storage {
         return null;
     }
 
+    public ValuedFaction getValuedFactionAt(int position) {
+        if (position < 0 || valuedFactions.size() > position) {
+            return null;
+        }
+
+        return valuedFactions.get(position);
+    }
+
     public List<ValuedFaction> getValuedFactions() {
         return new ArrayList<>(valuedFactions);
     }

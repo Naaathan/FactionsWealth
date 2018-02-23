@@ -247,6 +247,7 @@ public class CmdWealth extends FCommand {
                         MessageUtils.getInstance().WEALTH_MESSAGE
                                 .replace("{position}", "" + (i + 1))
                                 .replace("{faction}", faction.getTag())
+                                .replace("{relation}", faction.getRelationTo(fme).getColor() + "")
                                 .replace("{wealth}", FORMAT.format(valuedFaction.getTotalValue()))
                 );
 

@@ -18,7 +18,7 @@ public class InventoryUtils {
 
             if (itemStack.getType() == Material.MOB_SPAWNER) {
                 if (FactionsWealth.isHookedSilkSpawners()) {
-                    int id = FactionsWealth.getInstance().getSilkSpawnersHook().getHook().getStoredSpawnerItemEntityID(itemStack);
+                    int id = FactionsWealth.getInstance().getSilkSpawnersHook().getStoredSpawnerItemEntityID(itemStack);
                     EntityType entityType = EntityType.fromId(id);
 
                     if (entityType != null) {

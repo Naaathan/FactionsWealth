@@ -5,6 +5,7 @@ import com.massivecraft.factions.struct.Relation;
 
 import net.kyuzi.factionswealth.FactionsWealth;
 import net.kyuzi.factionswealth.entity.ValuedFaction;
+import net.kyuzi.factionswealth.event.ValuedFactionWealthUpdateEvent;
 import net.kyuzi.factionswealth.task.TimerTask;
 import net.kyuzi.factionswealth.utility.FactionUtils;
 
@@ -37,6 +38,14 @@ public class WealthUpdateTask extends TimerTask {
         if (!updates.isEmpty()) {
             for (WealthUpdate update : updates) {
                 this.updates.remove(update);
+
+                ValuedFactionWealthUpdateEvent valuedFactionWealthUpdateEvent = new ValuedFactionWealthUpdateEvent(update.getValuedFaction(), update);
+                FactionsWealth.getInstance().getServer().getPluginManager().callEvent(valuedFactionWealthUpdateEvent);
+
+                if (valuedFactionWealthUpdateEvent.isCancelled()) {
+                    continue;
+                }
+
                 FactionsWealth.getInstance().getStorage().addValuedFaction(update.update());
             }
         }

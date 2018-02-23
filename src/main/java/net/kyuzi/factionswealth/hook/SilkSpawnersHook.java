@@ -4,10 +4,20 @@ import de.dustplanet.util.SilkUtil;
 
 import net.kyuzi.factionswealth.exception.HookFailureException;
 
-public class SilkSpawnersHook extends Hook<SilkUtil> {
+import org.bukkit.inventory.ItemStack;
+
+public class SilkSpawnersHook {
 
     public SilkSpawnersHook() throws HookFailureException {
-        super(SilkUtil.hookIntoSilkSpanwers());
+        try {
+            Class.forName("de.dustplanet.util.SilkUtil");
+        } catch (ClassNotFoundException ignored) {
+            throw new HookFailureException("SilkUtil class not found!");
+        }
+    }
+
+    public int getStoredSpawnerItemEntityID(ItemStack itemStack) {
+        return SilkUtil.hookIntoSilkSpanwers().getStoredSpawnerItemEntityID(itemStack);
     }
 
 }

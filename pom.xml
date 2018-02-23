@@ -6,7 +6,7 @@
 
     <groupId>net.kyuzi</groupId>
     <artifactId>FactionsWealth</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
 
     <name>FactionsWealth</name>
@@ -40,6 +40,10 @@
 
     <repositories>
         <repository>
+            <id>placeholderapi</id>
+            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+        <repository>
             <id>silkspawners</id>
             <url>https://ci.dustplanet.de/plugin/repository/everything/</url>
         </repository>
@@ -60,6 +64,12 @@
             <scope>system</scope>
             <systemPath>${lib.jars}/FactionsUUID.jar</systemPath>
             <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.8.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.dustplanet</groupId>
